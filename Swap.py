@@ -1,12 +1,7 @@
 
 ###############################
 # SWAP1.4  CODE LNG CREATE BY WOJTEK KOZIEŁ
-###############################
-
-
-#######################################
-# IMPORTS
-#######################################
+##############################
 
 from strings_with_arrows import *
 
@@ -14,17 +9,10 @@ import string
 import os
 import math
 
-#######################################
-# CONSTANTS
-#######################################
-
 DIGITS = '0123456789'
 LETTERS = string.ascii_letters
 LETTERS_DIGITS = LETTERS + DIGITS
 
-#######################################
-# ERRORS
-#######################################
 
 class Error:
   def __init__(self, pos_start, pos_end, error_name, details):
@@ -74,9 +62,6 @@ class RTError(Error):
 
     return 'Traceback (most recent call last):\n' + result
 
-#######################################
-# POSITION
-#######################################
 
 class Position:
   def __init__(self, idx, ln, col, fn, ftxt):
@@ -99,9 +84,6 @@ class Position:
   def copy(self):
     return Position(self.idx, self.ln, self.col, self.fn, self.ftxt)
 
-#######################################
-# TOKENS
-#######################################
 
 TT_INT						= 'INT'
 TT_FLOAT    				= 'FLOAT'
@@ -168,10 +150,6 @@ class Token:
   def __repr__(self):
     if self.value: return f'{self.type}:{self.value}'
     return f'{self.type}'
-
-#######################################
-# LEXER
-#######################################
 
 class Lexer:
   def __init__(self, fn, text):
@@ -366,9 +344,6 @@ class Lexer:
 
     self.advance()
 
-#######################################
-# NODES
-#######################################
 
 class NumberNode:
   def __init__(self, tok):
@@ -509,10 +484,6 @@ class BreakNode:
     self.pos_start = pos_start
     self.pos_end = pos_end
 
-#######################################
-# PARSE RESULT
-#######################################
-
 class ParseResult:
   def __init__(self):
     self.error = None
@@ -545,10 +516,6 @@ class ParseResult:
     if not self.error or self.last_registered_advance_count == 0:
       self.error = error
     return self
-
-#######################################
-# PARSER
-#######################################
 
 class Parser:
   def __init__(self, tokens):
@@ -1259,13 +1226,7 @@ class Parser:
 
     return res.success(left)
 
-#######################################
-# RUNTIME RESULT
-#######################################
 
-###############################
-# SWAP1.4  CODE LNG CREATE BY WOJTEK KOZIEŁ
-###############################
 
 class RTResult:
   def __init__(self):
@@ -1319,9 +1280,6 @@ class RTResult:
       self.loop_should_break
     )
 
-#######################################
-# VALUES
-#######################################
 
 class Value:
   def __init__(self):
@@ -1603,9 +1561,7 @@ class List(Value):
   def __repr__(self):
     return f'[{", ".join([repr(x) for x in self.elements])}]'
 
-###############################
-# SWAP1.4  CODE LNG CREATE BY WOJTEK KOZIEŁ
-###############################
+
 
 class BaseFunction(Value):
   def __init__(self, name):
@@ -1800,9 +1756,6 @@ class BuiltInFunction(BaseFunction):
         exec_ctx
       ))
 
-###############################
-# SWAP1.4  CODE LNG CREATE BY WOJTEK KOZIEŁ
-###############################
 
     try:
       element = list_.elements.pop(index.value)
@@ -1885,9 +1838,6 @@ class BuiltInFunction(BaseFunction):
     return RTResult().success(Number.null)
   execute_run.arg_names = ["fn"]
 
-###############################
-# SWAP1.4  CODE LNG CREATE BY WOJTEK KOZIEŁ
-###############################
 
 BuiltInFunction.print       = BuiltInFunction("print")
 BuiltInFunction.print_ret   = BuiltInFunction("print_ret")
@@ -1904,9 +1854,6 @@ BuiltInFunction.extend      = BuiltInFunction("extend")
 BuiltInFunction.len					= BuiltInFunction("len")
 BuiltInFunction.run					= BuiltInFunction("run")
 
-#######################################
-# CONTEXT
-#######################################
 
 class Context:
   def __init__(self, display_name, parent=None, parent_entry_pos=None):
@@ -1914,10 +1861,6 @@ class Context:
     self.parent = parent
     self.parent_entry_pos = parent_entry_pos
     self.symbol_table = None
-
-#######################################
-# SYMBOL TABLE
-#######################################
 
 class SymbolTable:
   def __init__(self, parent=None):
@@ -1936,13 +1879,7 @@ class SymbolTable:
   def remove(self, name):
     del self.symbols[name]
 
-###############################
-# SWAP1.4  CODE LNG CREATE BY WOJTEK KOZIEŁ
-###############################
 
-#######################################
-# INTERPRETER
-#######################################
 
 class Interpreter:
   def visit(self, node, context):
@@ -1998,9 +1935,6 @@ class Interpreter:
     value = res.register(self.visit(node.value_node, context))
     if res.should_return(): return res
 
-###############################
-# SWAP1.4  CODE LNG CREATE BY WOJTEK KOZIEŁ
-###############################
 
     context.symbol_table.set(new_name, value)
     return res.success(value)
@@ -2085,9 +2019,7 @@ class Interpreter:
     res = RTResult()
     elements = []
 
-###############################
-# SWAP1.4  CODE LNG CREATE BY WOJTEK KOZIEŁ
-###############################
+
 
     start_value = res.register(self.visit(node.start_value_node, context))
     if res.should_return(): return res
@@ -2150,9 +2082,6 @@ class Interpreter:
 
       elements.append(value)
 
-###############################
-# SWAP1.4  CODE LNG CREATE BY WOJTEK KOZIEŁ
-###############################
 
     return res.success(
       Number.null if node.should_return_null else
@@ -2206,13 +2135,6 @@ class Interpreter:
   def visit_BreakNode(self, node, context):
     return RTResult().success_break()
 
-#######################################
-# RUN
-#######################################
-
-###############################
-# SWAP1.4  CODE LNG CREATE BY WOJTEK KOZIEŁ
-###############################
 
 global_symbol_table = SymbolTable()
 global_symbol_table.set("NULL", Number.null)
